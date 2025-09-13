@@ -2,6 +2,39 @@
 
 A production-ready React + Express app showcasing strict multi-tenancy, JWT auth with roles, subscription gating, and a minimal UI. Includes both an integrated Express server and Vercel serverless API functions for deployment flexibility.
 
+## Implementation Details
+
+### Multi-Tenancy
+- Shared schema approach: All data models (e.g., Note, User) include a `tenantId` field.
+- Strict isolation: All queries and mutations are scoped by the authenticated user's `tenantId` via middleware and store logic. Data from one tenant is never accessible to another.
+- Tenants are seeded as Acme and Globex, each with unique slugs and plans.
+
+### Authentication & Authorization
+- JWT-based login: Users authenticate via `/auth/login`, receiving a JWT containing their role and tenant info.
+- Roles: Admin (can invite users, upgrade subscription), Member (can CRUD notes).
+- Role enforcement: Middleware checks JWT and role for protected endpoints.
+- Four test accounts are seeded for demo purposes.
+
+### Subscription Gating
+- Free plan: Tenants can create up to 3 notes. Pro plan: unlimited notes.
+- Note creation endpoint enforces plan limits.
+- Admins can upgrade their tenant via `/tenants/:slug/upgrade`, which immediately lifts the note limit.
+
+### API Endpoints
+- All endpoints enforce tenant isolation and role checks.
+- CRUD for notes, upgrade endpoint for plan changes, health endpoint for status.
+
+### Frontend
+- Built with React and Tailwind CSS.
+- Supports login, notes CRUD, and upgrade prompt when note limit is reached.
+- Auth state and tenant info are managed via JWT decoding and context.
+
+### CORS
+- CORS is enabled globally for all API endpoints, allowing requests from any origin (`*`).
+
+### Deployment
+- The project is designed for deployment on Vercel (serverless API functions) or Netlify (with minor adaptation for backend).
+
 ## Multi-tenancy Approach
 
 Chosen: shared schema with a tenantId column.

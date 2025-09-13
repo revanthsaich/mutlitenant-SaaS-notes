@@ -18,13 +18,11 @@ export default function Index() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/auth/login", {
+      // Use api utility to ensure token is set and sent correctly
+      const body = await (await import("@/lib/api")).api("/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body?.error || "Login failed");
       setToken(body.token);
       const payload = decodeToken(body.token);
       if (!payload) throw new Error("Invalid token");
